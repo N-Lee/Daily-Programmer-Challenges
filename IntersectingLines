@@ -1,0 +1,107 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class IntersectingLines {
+	
+	private static int nLines;
+	private static ArrayList<String> labelXY = new ArrayList<String>();
+	private static String[][] values;
+	private static int count = 0;
+	private static double[][] points;
+	private static double[] slope;
+	private static StringBuffer sb = new StringBuffer();
+	private static Scanner input = new Scanner(System.in);
+	private static boolean isNumber = false;
+	private static boolean[] intersects;
+	
+	public static void coordinates(){
+		
+		String test;
+		
+		for (int i = 0; i < nLines; i++){
+			test = labelXY.get(i);
+			
+			for (int j = 0; j < test.length(); j++){
+				if (test.charAt(j) != ' '){
+					values[i][count] = sb.append(test.charAt(j)).toString();
+				}
+				else if (test.charAt(j) == ' '){
+					count++;
+					sb = new StringBuffer();
+				}
+			}
+			sb = new StringBuffer();
+			count = 0;
+			
+		}	
+	}
+	
+	public static void toDouble(){
+		
+		for (int i = 0; i < nLines; i++){
+			for (int j = 1; j < 5; j++){
+				points[i][j-1] = Double.parseDouble(values[i][j]);
+			}
+		}	
+	}
+	
+	public static double slope(){
+		
+		for (int i = 0; i < nLines; i++)
+			slope[i] = (points[i][3]-points[i][1])/(points[i][2]-points[i][0]);
+		return 1;
+	}
+	
+	public static void main(String[] args){
+		
+		System.out.print("Enter the number of lines: ");
+		
+		do {
+			try {
+				nLines = input.nextInt();
+				input.nextLine();
+				isNumber = true;
+			} catch (InputMismatchException e) {
+				System.out.println("Enter a number");
+			}
+		} while (!isNumber);
+		
+		System.out.println("Enter the coordinates is the form :");
+		System.out.println("(Label) (x1 y1) (x2 y2)");
+		
+		for (int i = 0; i < nLines; i++){
+			
+			labelXY.add(input.nextLine());
+		
+		}
+
+		values = new String[nLines][5];
+		points = new double[nLines][4];
+		slope = new double[nLines];
+		intersects = new boolean[nLines];
+		coordinates();
+		toDouble();
+		slope();
+		
+		for (int i = 0; i < nLines - 1; i++){
+			for (int j = 1; j < nLines; j++) {
+				if (slope[i] != slope[j]) {
+					System.out.println(values[i][0] + " and "
+							+ values[j][0] + " intersects.");
+					intersects[i] = true;
+					intersects[j] = true;
+				}
+			}
+		}
+		
+		System.out.println("No Intersections:");
+		for (int i = 0; i < nLines; i++){
+			if (!intersects[i]){
+				System.out.println(values[i][0]);
+			}
+		}
+		
+	}
+}
+
