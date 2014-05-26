@@ -1,0 +1,72 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+bool anagram(string word1, string word2){
+    int length = word1.size();
+    if (word1.size() != word2.size()){
+        cout << "The words have different number of letters\n";
+        return false;
+    }
+    for (int i = 0; i < length; i++) {
+        if (word1[i] != word2[length - 1 - i])
+            return false;
+    }
+    return true;
+}
+
+string removeLetter(string word, char letter){
+    string newWord = word;
+    for (int i = 0; i < word.size(); i++){
+        if (word[i] == letter) {
+            newWord.erase(i,i);
+        }
+    }
+    return newWord;
+}
+
+// Sum of all elements in an array
+int sumOfArray(int array[]){
+    int sum = 0;
+    for (int i = 0; i < sizeof(array)/sizeof(*array); i++)
+        sum += array[i];
+    return sum;
+}
+
+int main()
+{
+    // Hello World!
+    cout << "Hello World \n";
+    
+    // First 100 numbers that are divisible by 3 and 5
+    for (int i = 1; i < 101; i++) {
+        if (i % 3 == 0 || i % 5 == 0)
+            cout << i << endl;
+    }
+    
+    // If two words are anagrams
+    string fWord;
+    string sWord;
+    cout << "Enter first word\n";
+    cin >> fWord;
+    cout << "Enter second word\n";
+    cin >> sWord;
+    if (anagram(fWord, sWord))
+        cout << fWord << " and " << sWord << " are anagrams\n";
+    else
+        cout << fWord << " and " << sWord << " are not anagrams\n";
+    
+    // Remove a specific letter from a word
+    string word;
+    char remove;
+    cout << "Enter a word\n";
+    cin >> word;
+    cout << "Enter a letter\n";
+    cin >> remove;
+    cout << removeLetter(word, remove) << endl;
+
+    return 0;
+}
+
+
