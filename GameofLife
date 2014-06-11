@@ -1,0 +1,143 @@
+// http://www.reddit.com/r/dailyprogrammer/comments/271xyp/622014_challenge_165_easy_ascii_game_of_life/
+
+import java.util.Scanner;
+
+public class GameOfLife {
+
+	private static int counter = 0;
+	private static int n;
+	private static int x;
+	private static int y;
+	private static StringBuffer sb = new StringBuffer();
+	private static char[][] grid;
+	private static char[][] grid2;
+	private static int whichGrid = 2;
+
+	public static void findNXY(String firstL){
+
+		String iterations = null;
+		String wide = null;
+		String tall = null;
+		int count = 1;
+
+		for (int i = 0; i < firstL.length(); i++){
+			if (firstL.charAt(i) == ' '){
+				count++;
+				sb = new StringBuffer();
+			} else {
+				switch (count){
+				case 1: iterations = sb.append(firstL.charAt(i)).toString();
+				break;
+				case 2: wide = sb.append(firstL.charAt(i)).toString();
+				break;
+				case 3: tall = sb.append(firstL.charAt(i)).toString();
+				break;
+				}
+			}
+		}
+
+		n = Integer.parseInt(iterations);
+		x = Integer.parseInt(wide);
+		y = Integer.parseInt(tall);
+
+	}
+
+	public static void board(String line, int lineNum){
+		
+		for (int i = 0; i < x; i++){
+			grid[lineNum][i] = line.charAt(i);
+			grid2[lineNum][i] = line.charAt(i);
+		}
+		
+	}
+	
+	public static void area(){
+	
+		for (int i = 0; i < y; i++){
+			for (int j = 0; j < x; j++){
+				
+				int on = 0;
+				if (i != 0 && j !=0){
+					if (grid[i-1][j-1] == '#')
+						on++;
+				
+				} if (i != 0){
+					if (grid[i-1][j] == '#')
+						on++;
+					
+				} if (i != 0 && j != x-1){
+					if (grid[i-1][j+1] == '#')
+						on++;
+					
+				} if (j != 0){
+					if (grid[i][j-1] == '#')
+						on++;					
+					
+				} if (j != x-1){
+					if (grid[i][j+1] == '#')
+						on++;
+					
+				} if (i != y-1 && j != 0) {
+					if (grid[i+1][j-1] == '#')
+						on++;
+					
+				}if (i != y-1){
+					if (grid[i+1][j] == '#')
+						on++;
+					
+				} if (i != y-1 && j != x-1){
+					if (grid[i+1][j+1] == '#')
+						on++; 
+				} 
+				counter ++;
+				System.out.print(counter + ". ");
+				System.out.println(on);
+				
+					if (on == 3)
+						grid2[i][j] = '#';
+					else
+						grid2[i][j] = '.';
+			}
+		}
+		
+	}
+	
+	public static void copy(){
+		
+		for (int i = 0; i < y; i++){
+			for (int j = 0; j < x; j++){
+				grid[i][j] = grid2[i][j];
+			}
+		}
+		
+	}
+	
+	public static void main(String[] args){
+		
+		String gridLine;
+		Scanner input = new Scanner(System.in);
+		String nXY = input.nextLine();
+		findNXY(nXY);
+		grid = new char[y][x];
+		grid2 = new char[y][x];
+		for (int i = 0; i < y; i++){
+			gridLine = input.nextLine();
+			board(gridLine, i);
+		}
+		
+		for (int i = 0; i < n; i++){
+			area();
+			copy();
+			whichGrid++;
+		}
+		
+		for (int i = 0; i < y; i++){
+			for (int j = 0; j < x; j++){
+				System.out.print(grid[i][j]);
+				if (j == x-1)
+					System.out.println();
+			}
+		}
+	}
+}
+
