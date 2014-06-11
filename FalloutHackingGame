@@ -1,0 +1,171 @@
+// http://www.reddit.com/r/dailyprogrammer/comments/263dp1/5212014_challenge_163_intermediate_fallouts/
+
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.BufferedReader;
+
+public class Fallout {
+
+	private static int difficulty;
+	private static final int attempt = 4;
+	private static Scanner input = new Scanner(System.in);
+	private static int letters;
+	private static String[] list;
+	private static String[] chosenList;
+	private static String guess;
+	private static String answer;
+	private static int guesses;
+	private static boolean end = false;
+
+
+	public static String[] getWordList() throws IOException{
+
+		ArrayList<String> wordList = new ArrayList<String>();
+
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("enable1.txt"));
+			String line = br.readLine();
+
+			while (line != null) {
+				wordList.add(line);
+				line = br.readLine();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String[] list = new String[wordList.size()];
+
+		for (int i = 0; i < wordList.size(); i++){
+			list[i] = wordList.get(i);
+		}
+
+		return list;
+	}
+
+	public static int getDifficulty(){
+
+		Scanner input = new Scanner(System.in);
+		boolean loop = true;
+		int level = 0;
+
+		while (loop) {
+			System.out.print("Difficulty (1-5)? ");
+
+			try {
+				level = input.nextInt();
+
+				if (level >= 1 && level <= 5)
+					loop = false;
+			} 
+
+			catch (InputMismatchException e) {
+				System.out.println("Enter an integer.");
+				input.nextLine();
+			}
+		}
+		return level;
+	}
+
+	public static int numberOfLetters(){
+		int number = 0;
+		switch (difficulty){
+		case 1: number = 4;
+		break;
+		case 2: number = (int)Math.ceil(Math.random()*3) + 4;
+		break;
+		case 3: number = ((int)Math.random()*3) + 7;
+		break;
+		case 4: number = ((int)Math.random()*3) + 10;
+		break;
+		case 5: number = ((int)Math.random()*2) + 13;
+		break;
+		}
+		return number;
+	}
+
+	public static String[] chosenWords(String[] allWords){
+		String[] selectedWords = new String[10];
+		String test = "";
+		for (int i = 0; i < 10; i++){
+			do{
+				test = list[(int)(Math.random()*list.length)];
+			} while (test.length() != letters);
+			selectedWords[i] = test;
+		}
+		answer = selectedWords[(int)(Math.random()*10)];
+		return selectedWords;
+	}
+
+	public static int correct(String enter){
+
+		int match = 0;
+
+		if (enter.equals(answer))
+			return 100;
+
+		else{
+
+			for (int i = 0; i < enter.length(); i++){
+				if (enter.charAt(i) == answer.charAt(i))
+					match++;
+			}
+			return match;
+		}
+	}
+
+	public static void main(String[] args) throws IOException{
+
+		difficulty = getDifficulty();
+		list = getWordList();
+		for (int i = 0; i < 10; i++)
+		letters = numberOfLetters();
+		chosenList = chosenWords(list);
+		guesses = 4;
+		boolean inList = false;
+
+		for (String s : chosenList)
+			System.out.println(s);	
+
+		do{
+			System.out.println("Guess (" + guesses + " left)?");
+			do {
+				inList = false;
+				guess = input.nextLine();
+
+				for (int i = 0;  i < chosenList.length; i++){
+
+					if (guess.equals(chosenList[i])){
+						inList = true;
+						break;
+					} else if (!guess.equals(chosenList[chosenList.length - 1]) && 
+							i == chosenList.length - 1){
+						System.out.println("Word entered is not on the list");
+					}
+				}
+			} while (!inList);
+			
+			if (correct(guess) == 100)
+				end = true;
+			else{
+				System.out.println(correct(guess) + "/10 correct");
+				guesses--;
+			}
+			
+			if (guesses == -1)
+				end = true;
+			
+		} while (!end);
+		
+		if (correct(guess) == 100)
+			System.out.println("You Win");
+		else
+			System.out.println("Game Over");
+	}
+}
+
