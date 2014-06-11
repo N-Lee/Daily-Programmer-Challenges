@@ -1,0 +1,131 @@
+//http://www.reddit.com/r/dailyprogrammer/comments/278ptv/642014_challenge_165_intermediate_ascii_maze/
+
+import java.util.Scanner;
+
+public class Maze {
+	
+	private static char[][] maze;
+	private static int length;
+	private static int height;
+	private static StringBuffer sb = new StringBuffer();
+	private static int startL;
+	private static int startH;
+	
+	public static void findLengthHeight(String firstL){
+
+		String wide = null;
+		String tall = null;
+		int count = 1;
+
+		for (int i = 0; i < firstL.length(); i++){
+			if (firstL.charAt(i) == ' '){
+				count++;
+				sb = new StringBuffer();
+			} else {
+				switch (count){
+				case 1: wide = sb.append(firstL.charAt(i)).toString();
+				break;
+				case 2: tall = sb.append(firstL.charAt(i)).toString();
+				break;
+				}
+			}
+		}
+
+		length = Integer.parseInt(wide);
+		height = Integer.parseInt(tall);
+
+	}
+
+	public static void board(String line, int lineNum){
+		
+		for (int i = 0; i < length; i++){
+			maze[i][lineNum] = line.charAt(i);
+		}
+		
+	}
+	
+	public static void start(){
+		
+		for (int i = 0; i < length; i++){
+			for (int j = 0; j < height; j++){
+				if (maze[i][j] == 's' || maze[i][j] == 'S'){
+					startL = i;
+					startH = j;
+				}
+			}
+		}
+		
+	}
+	
+	public static boolean valid(int row, int column){
+		
+		if (maze[row][column] != '#' && maze[row][column] != '!')
+			return true;
+		return false;
+		
+	}
+	
+	public static boolean finish(int x, int y){
+		
+		boolean done = false;
+		if (valid(x,y)){
+			if (maze[x][y] == 'E') {
+				done = true;
+			} else {
+				maze[x][y] = '!';
+				done = finish(x, y + 1);
+				if (!done)
+					done = finish(x + 1, y);
+				if (!done)	
+					done = finish(x, y - 1);
+				if (!done)
+					done = finish(x - 1, y);
+			}
+		}
+		if (done && maze[x][y] != 'S'){
+			maze[x][y] = '*';
+			
+		}
+		return done;
+		
+	}
+	
+	public static void removeExclamation(){
+		
+		for (int i = 0; i < height; i++){
+			for (int j = 0; j < length; j++){
+				if(maze[j][i] == '!')
+					maze[j][i] = ' ';
+			}
+		}
+	}
+	
+	public static void print(){
+		
+		for (int i = 0; i < height; i++){
+			for (int j = 0; j < length; j++){
+				System.out.print(maze[j][i]);
+			}
+			System.out.println();
+		}
+		
+	}
+	
+	public static void main(String[] args){
+		
+		String mazeLine;
+		Scanner input = new Scanner(System.in);
+		String parameters = input.nextLine();
+		findLengthHeight(parameters);
+		maze = new char[length][height];
+		for (int i = 0; i < height; i++){
+			mazeLine = input.nextLine();
+			board(mazeLine, i);
+		}
+		finish(1,1);
+		removeExclamation();
+		print();
+	}
+	
+}
+
